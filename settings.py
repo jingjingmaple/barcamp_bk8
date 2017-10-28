@@ -1,6 +1,7 @@
-TRACK_TERMS = ["ubuntu"]
+TRACK_TERMS = ["#bcbk8"]
 CONNECTION_STRING = ""
-
+CSV_NAME = "tweets.csv"
+TABLE_NAME = "election"
 
 TWITTER_APP_KEY = ""
 TWITTER_APP_SECRET = ""
