@@ -31,33 +31,36 @@
         overflow-y: scroll;
         color: #656565;
         position: absolute;
-        right: 150px;
+        right: 55px;
         top: 50px;
         bottom: 50px;
         font-size: 20px;
-        -webkit-mask-image: -webkit-gradient(linear, left 85%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
+        //-webkit-mask-image: -webkit-gradient(linear, left 85%, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,0)));
+      }
+      .tweetbox {
+        color: #656565;
       }
       #tweet::-webkit-scrollbar-track
-{
-  border-radius: 10px;
-	//-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-  border-radius: 10px;
-	background-color: #95989A;
-}
+      {
+        border-radius: 10px;
+        //-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 10px;
+        background-color: #95989A;
+      }
 
-#tweet::-webkit-scrollbar
-{
-  width: 12px;
-	background-color: #95989A;
-}
+      #tweet::-webkit-scrollbar
+      {
+        width: 12px;
+        background-color: #95989A;
+      }
 
-#tweet::-webkit-scrollbar-thumb
-{
-	border-radius: 10px;
-	//-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-  background-color: #FFF;
-  border: 2px solid #95989A;
-}
+      #tweet::-webkit-scrollbar-thumb
+      {
+        border-radius: 10px;
+        //-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: #FFF;
+        border: 2px solid #95989A;
+      }
 
       #ima {
         width: 55px;
@@ -71,6 +74,7 @@
       #content {
         display: block;
         width: auto;
+        height: auto;
       }
       h1 {
         font-size: 72px;
@@ -98,7 +102,7 @@
       }
 
       .logo {
-        width: 45%;
+        width: 50%;
         float: left;
 
       }
@@ -111,43 +115,54 @@
 
       }
       .modal-content {
-        background: linear-gradient(to right, #FF7474, #FFDC7E);
+        background: linear-gradient(to right, #FF7474, #FF9D6C);
         color: #FFF;
         font-size: 50px;
         text-align: left;
-        padding: 20px;
+        padding: 30px;
+        border-radius: 30px;
         
+      }
+      .modal-content .username {
+        color: #FFC8AD;
       }
       .modal-dialog {
         width: 80%;
         margin: auto;
         padding: 70px 0;
+
       }
       .username {
         display: inline;
         color: #95989A;
       }
+
+      .centered-modal.in {
+          display: flex !important;
+      }
+      .centered-modal .modal-dialog {
+          margin: auto;
+      }
     </style>
 
     <script type="text/javascript">
         var last_tweet =0;
-        var listtweet=[0];
+        tweet_list=[]
         function loadTweet() {
 
-        $.getJSON( "http://localhost:8081/tweet/"+last_tweet, function( data ) {
-          
+          $.getJSON( "http://localhost:8081/tweet/"+last_tweet, function( data ) {
+            
           for (i=data.tweet.length-1;i>=0; i--) {
-              
-              //console.log(data.tweet[i].text);
-              listtweet.push(data.tweet[i].id_str);
-              if (i==0) {
-                last_tweet = data.tweet[i].id_str;
-              }
-
-              console.log("fuck");
-              $("#tweet").prepend('<div class="tweetbox" id="'+data.tweet[i].id_str+'"></div>');
+    
+            //console.log(data.tweet[i].text);
+            if (i==0) {
+              last_tweet = data.tweet[i].id_str;
+            }
+            if (tweet_list.indexOf(data.tweet[i].id_str) < 0) { 
+              $("#tweet").prepend('<div onClick="popupTweet(\''+data.tweet[i].id_str+'\');" class="tweetbox" id="'+data.tweet[i].id_str+'"></div>');
               $("#"+data.tweet[i].id_str).append('<div id="'+data.tweet[i].id_str+'"><div class="panel panel-default"><div class="panel-body"><div id="ima"><img height="48px" width="48px" class="img-circle" src="'+data.tweet[i].user_pic+'"></div><div id="content"><b>'+data.tweet[i].name+'</b> <div class="username">@'+data.tweet[i].username+'</div><br> '+data.tweet[i].text+'</div></div></div></div>').hide().slideDown(1000);
-
+              tweet_list.push(data.tweet[i].id_str);
+            }
           }
           });
         }
@@ -157,18 +172,22 @@
           for (i=data.tweet.length-1;i>=0; i--) {
               
               //console.log(data.tweet[i].text);
-              listtweet.push(data.tweet[i].id_str);
-              console.log("fuck");
-              $("#tweet").prepend('<div class="tweetbox" id="'+data.tweet[i].id_str+'"></div>');
+              $("#tweet").prepend('<div onClick="popupTweet(\''+data.tweet[i].id_str+'\');" class="tweetbox" id="'+data.tweet[i].id_str+'"></div>');
               $("#"+data.tweet[i].id_str).append('<div id="'+data.tweet[i].id_str+'"><div class="panel panel-default panel-random"><div class="panel-body"><div id="ima"><img height="48px" width="48px" class="img-circle" src="'+data.tweet[i].user_pic+'"></div><div id="content"><b>'+data.tweet[i].name+'</b> <div class="username">@'+data.tweet[i].username+'</div><br> '+data.tweet[i].text+'</div></div></div></div>').hide().slideDown(1000);
-              document.getElementById('popup').innerHTML = '<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-body"><div id="ima2"><img height="128px" width="128px" class="img-circle" src="'+data.tweet[i].user_pic+'"></div><div id="content"><b>'+data.tweet[i].name+'</b> <div class="username">@'+data.tweet[i].username+'</div><br> '+data.tweet[i].text+'</div></div></div></div></div>';
-              $('#myModal').modal('show');
+              
+              //document.getElementById('popup').innerHTML = '<div class="modal fade centered-modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-body"><div id="ima2"><img height="128px" width="128px" class="img-circle" src="'+data.tweet[i].user_pic+'"></div><div id="content"><b>'+data.tweet[i].name+'</b> <div class="username">@'+data.tweet[i].username+'</div><br> '+data.tweet[i].text+'</div></div></div></div></div>';
+              //$('#myModal').modal('show');
           }
-          });
-         
+          });  
+        }
+        function popupTweet(tweetid) {
+        console.log(tweetid);
+          $('#popup').html('<div class="modal fade centered-modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"><div class="modal-dialog" role="document"><div class="modal-content"><div style="position: absolute; right: 20px; top: 20px;"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></div><div class="modal-body"><div id="ima2"><img height="128px" width="128px" class="img-circle" src="'+$('#'+tweetid+' img').attr('src')+'"></div><div id="content">'+$('#'+tweetid+' #content').html()+'</div></div></div></div></div>');
+          $('#myModal').modal('show');
         }
         
-        setInterval(loadTweet,1000);
+          
+        setInterval(loadTweet,1500);
         </script>
 
   </head>
@@ -196,14 +215,15 @@
             <div class="row">
                 <div class="logo">
                   
-                   <img src="./barcamp-8.svg" width="400px">
-                   <img src="./barcamp-8-logo-text.svg" width="400px"><br><br><br>
+                   <img src="./barcamp-8.svg" width="60%"> <!--400px-->
+                   <img src="./barcamp-8-logo-text.svg" width="60%"><br><br><br>
                    <button type="button" class="btn btn-random" onclick="randomTweet();">RANDOM</button>
                    
   
   
   
                 </div>
+            
               <div class="tweet" align="left">
                 <div id="tweet"></div>
               </div>

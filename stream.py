@@ -5,9 +5,20 @@ import tweepy
 import dataset
 from textblob import TextBlob
 from var_dump import var_dump
-#from sqlalchemy.exc import ProgrammingError
 import json
-db = dataset.connect('sqlite:///mydatabase.db')
+TRACK_TERMS=[]
+TRACK_TERMS.append(input('Enter hashtag: '))
+
+if settings.TWITTER_APP_KEY == "":
+	settings.TWITTER_APP_KEY = input('TWITTER_APP_KEY')
+
+if settings.TWITTER_APP_SECRET == "":
+	settings.TWITTER_APP_SECRET= input('TWITTER_APP_SECRET')
+if settings.TWITTER_KEY == "":
+	settings.TWITTER_KEY = input('TWITTER_USER_KEY')
+if settings.TWITTER_SECRET == "":
+	settings.TWITTER_SECRET = input('TWITTER__USER_SECRET')
+db = dataset.connect('sqlite:///tweet.db')
 #db = dataset.connect(settings.CONNECTION_STRING)
 
 class StreamListener(tweepy.StreamListener):
@@ -42,36 +53,12 @@ class StreamListener(tweepy.StreamListener):
 			coords = json.dumps(coords)
 		print(name)
 		print(text)
-		print(status.retweeted)
 		
 		print("----------")
-		'''
-		print(status)
-		print("------------------------------------------------------------------------------------")'''
+
 		table = db['tweet']
 		table.insert(dict(user=name,username=username,profile=status.user.profile_image_url,text=text,created = created,id_str=id_str))
-		"""
-		table = db[settings.TABLE_NAME]
-		try:
-			table.insert(dict(
-				user_description=description,
-				user_location=loc,
-				coordinates=coords,
-				text=text,
-				geo=geo,
-				user_name=name,
-				user_created=user_created,
-				user_followers=followers,
-				id_str=id_str,
-				created=created,
-				retweet_count=retweets,
-				user_bg_color=bg_color,
-				polarity=sent.polarity,
-				subjectivity=sent.subjectivity,
-			))
-		except ProgrammingError as err:
-			print(err)
-		"""
+
 
 	def on_error(self, status_code):
 		if status_code == 420:
@@ -84,4 +71,5 @@ api = tweepy.API(auth)
 
 stream_listener = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
-stream.filter(track=settings.TRACK_TERMS)
+print(TRACK_TERMS)
+stream.filter(track=TRACK_TERMS)
