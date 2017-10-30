@@ -8,9 +8,8 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from var_dump import var_dump
 
 ptime = strftime("%Y-%m-%d %H:%M:%S", localtime())
-db = dataset.connect('sqlite:///mydatabase.db')
+db = dataset.connect('sqlite:///tweet.db')
 table = db['tweet']
-#table.insert(dict(name='Jane Doe', age=37, country='France', gender='female', time=ptime))
 
 
 # HTTPRequestHandler class
